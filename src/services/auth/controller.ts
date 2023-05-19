@@ -12,11 +12,11 @@ export const register = async (req: Request, res: Response) => {
 	// try this
 	if (userType == UserType.FREELANCER || userType == UserType.BUSINESS) {
 		if (!businessName || !cacNo || !location || !password || !email || !address) {
-			return res.status(400).json({ error: `Request should have all parameters for ${userType}` })
+			return res.status(400).json({ message: `Request should have all parameters for ${userType}` })
 		}
 	} else if (userType == UserType.PROVIDER || userType == UserType.PROVIDER) {
 		if (!firstName || !lastName || !phoneNumber || !password || !email) {
-			return res.status(400).json({ error: `Request should have all parameters for ${userType}` })
+			return res.status(400).json({ message: `Request should have all parameters for ${userType}` })
 		}
 	}
 
@@ -29,7 +29,7 @@ export const register = async (req: Request, res: Response) => {
 	})
 	if (exsistingUser) {
 
-		return res.status(409).json({ error: "User already register" })
+		return res.status(409).json({ message: "User already register" })
 	}
 
 	if (type == UserType.FREELANCER) {
@@ -77,7 +77,7 @@ export const createOtp = async (req: Request, res: Response) => {
 	
 
 	if (!email) {
-		return res.status(400).json({ error: "Request should have email" })
+		return res.status(400).json({ message: "Request should have email" })
 	}
 	try {
 		const exsistingUser = await prisma.user.findUnique({
@@ -196,7 +196,7 @@ export const login = async (req: Request, res: Response) => {
 			if (!user.isVerified) {
 				return res.status(401).json({ message: "User is not verified. please verify your email" })
 			}
-			if (matched) {
+			if (!matched) {
 				return res.status(401).json({ message: "Incorrect credentials" })
 			}
 
