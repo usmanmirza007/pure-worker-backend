@@ -29,7 +29,7 @@ export const register = async (req: Request, res: Response) => {
 	})
 	if (exsistingUser) {
 
-		return res.status(409).json({ message: "User already register" })
+		return res.status(409).json({ message: "User already registered" })
 	}
 
 	if (type == UserType.FREELANCER) {
@@ -74,7 +74,7 @@ export const register = async (req: Request, res: Response) => {
 export const createOtp = async (req: Request, res: Response) => {
 	const { email } = req.body
 	console.log('otp create');
-	
+
 
 	if (!email) {
 		return res.status(400).json({ message: "Request should have email" })
@@ -128,7 +128,7 @@ export const createOtp = async (req: Request, res: Response) => {
 						otp: rundomOTP,
 					}
 				})
-				
+
 				return res.status(200).json({ success: true })
 			}
 		});
@@ -200,25 +200,27 @@ export const login = async (req: Request, res: Response) => {
 				return res.status(401).json({ message: "Incorrect credentials" })
 			}
 
-				try {
-					const customerData = user;
+			try {
+				// const customerData = user;
 
-					const data = await jwt.sign({
-						username: email,
-						UserType: user.userType,
-						id: customerData.id,
+				// const data = await jwt.sign({
+				// 	username: email,
+				// 	UserType: user.userType,
+				// 	id: customerData.id,
 
-					}, secret_key.secret, {
-						expiresIn: '4h',
-						algorithm: secret_key.algorithms[0]
-					});
-					return res.status(200).json({ token: data, type: user.userType })
+				// }, secret_key.secret, {
+				// 	expiresIn: '4h',
+				// 	algorithm: secret_key.algorithms[0]
+				// });
+				// return res.status(200).json({ token: data, type: user.userType })
 
-				} catch (error) {
-					console.log('dff', error)
-					return res.status(500).json({ message: "Something went erong" })
-				}
-			
+				await createOtp(req, res)
+
+			} catch (error) {
+				console.log('dff', error)
+				return res.status(500).json({ message: "Something went erong" })
+			}
+
 		} else {
 			return res.status(404).json({ message: "User not found" })
 		}
