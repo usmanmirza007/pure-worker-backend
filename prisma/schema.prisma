@@ -6,7 +6,8 @@ generator client {
 
 datasource db {
     provider = "mysql"
-    url      = "mysql://root:Skillware4u@167.86.66.12:3306/pure_worker"
+    // url      = "mysql://root:Skillware4u@167.86.66.12:3306/pure_worker"
+    url      = env("DATABASE_URL")
 }
 
 enum UserType {
@@ -21,7 +22,6 @@ model User {
     firstName    String?
     lastName     String?
     email        String    @unique
-    password     String
     phoneNumber  String?
     otp          Int
     dob          DateTime?
@@ -29,6 +29,63 @@ model User {
     cacNo        String?
     location     String?
     address      String?
+    gender       String?
+    nationality  String?
     isVerified   Boolean   @default(false)
     userType     UserType
+    Service      Service[]
+}
+
+model Category {
+    id          Int           @id @default(autoincrement())
+    name        String
+    SubCategory SubCategory[]
+}
+
+model SubCategory {
+    id         Int      @id @default(autoincrement())
+    label      String
+    value      String
+    category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+    categoryId Int
+}
+
+model Service {
+    id                 Int              @id @default(autoincrement())
+    profilePicture     String?
+    description        String
+    serviceDetail      Json
+    price              Json
+    city               String
+    potfolioFirst      String?
+    potfolioSecond     String?
+    serviceImageFirst  String?
+    serviceImageSecond String?
+    serviceImageThird  String?
+    idNumber           String?
+    businessName       String?
+    cac                String?
+    scheduleDate       String?
+    appointmentTime    String?
+    User               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId             Int
+    ServiceContract    ServiceContract?
+}
+
+model ServiceContract {
+    id                Int      @id @default(autoincrement())
+    contractFirst     String   @default("First")
+    fullNameFirst     String
+    relationFirst     String
+    emailFirst        String   @unique
+    phoneNumberFirst  String
+    addressFirst      String
+    contractSecond    String   @default("Second")
+    fullNameSecond    String
+    relationSecond    String
+    emailSecond       String   @unique
+    phoneNumberSecond String
+    addressSecond     String
+    Service           Service? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+    serviceId         Int?     @unique
 }

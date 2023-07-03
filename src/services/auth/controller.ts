@@ -8,14 +8,14 @@ const nodemailer = require("nodemailer");
 const prisma = new PrismaClient()
 
 export const register = async (req: Request, res: Response) => {
-	const { firstName, lastName, phoneNumber, password, email, userType, dob, businessName, cacNo, location, address } = req.body
-	// try this
+	const { firstName, lastName, phoneNumber, email, userType, dob, businessName, cacNo, location, address, gender, nationality } = req.body
+
 	if (userType == UserType.FREELANCER || userType == UserType.BUSINESS) {
-		if (!businessName || !cacNo || !location || !password || !email || !address) {
+		if (!businessName || !cacNo || !location || !email || !address) {
 			return res.status(400).json({ message: `Request should have all parameters for ${userType}` })
 		}
-	} else if (userType == UserType.PROVIDER || userType == UserType.PROVIDER) {
-		if (!firstName || !lastName || !phoneNumber || !password || !email) {
+	} else if (userType == UserType.PROVIDER || userType == UserType.CUSTOMER) {
+		if (!firstName || !lastName || !phoneNumber || !email) {
 			return res.status(400).json({ message: `Request should have all parameters for ${userType}` })
 		}
 	}
@@ -42,8 +42,8 @@ export const register = async (req: Request, res: Response) => {
 		type = UserType.CUSTOMER
 	}
 
+
 	try {
-		var hash = bcrypt.hashSync(password, 8)
 
 		const user = await prisma.user.create({
 			data: {
@@ -55,10 +55,11 @@ export const register = async (req: Request, res: Response) => {
 				cacNo: cacNo,
 				location: location,
 				dob: new Date(dob),
-				password: hash,
 				email: email,
 				userType: type,
-				otp: 0
+				otp: 0,
+				gender: gender,
+				nationality: nationality
 			}
 		})
 
@@ -73,7 +74,7 @@ export const register = async (req: Request, res: Response) => {
 
 export const createOtp = async (req: Request, res: Response) => {
 	const { email } = req.body
-	console.log('otp create');
+	console.log('otp create', req.body);
 
 
 	if (!email) {
@@ -93,8 +94,8 @@ export const createOtp = async (req: Request, res: Response) => {
 			port: 465,
 			// debug: true,
 			auth: {
-				user: "usmanmirza22025@gmail.com",
-				pass: "lgieikfmncytxpcc"
+				user: "pureworkerapp@gmail.com",
+				pass: "mphtgdqcapmvmyll"
 			}
 		};
 
@@ -155,7 +156,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
 						UserType: user.userType,
 						id: user.id,
 					}, secret_key.secret, {
-						expiresIn: '4h',
+						// expiresIn: '4h',
 						algorithm: secret_key.algorithms[0]
 					});
 					const verifyUser = await prisma.user.update({
@@ -180,10 +181,10 @@ export const verifyOtp = async (req: Request, res: Response) => {
 
 
 export const login = async (req: Request, res: Response) => {
-	const { email, password } = req.body;
+	const { email } = req.body;
+	console.log('login', email);
 
-	//TODO: // verify with user type and email and password
-	if (!email || !password) {
+	if (!email) {
 		return res.status(400).json({ message: "Incomplet Parameter" });
 
 	} else {
@@ -191,17 +192,12 @@ export const login = async (req: Request, res: Response) => {
 
 		if (user) {
 
-			let matched = bcrypt.compareSync(password, user.password);
-
-			if (!user.isVerified) {
-				return res.status(401).json({ message: "User is not verified. please verify your email" })
-			}
-			if (!matched) {
-				return res.status(401).json({ message: "Incorrect credentials" })
-			}
+			// if (!user.isVerified) {
+			// 	return res.status(401).json({ message: "User is not verified. please verify your email" })
+			// }
 
 			try {
-				// const customerData = user;
+				
 
 				// const data = await jwt.sign({
 				// 	username: email,
@@ -215,7 +211,6 @@ export const login = async (req: Request, res: Response) => {
 				// return res.status(200).json({ token: data, type: user.userType })
 
 				await createOtp(req, res)
-
 			} catch (error) {
 				console.log('dff', error)
 				return res.status(500).json({ message: "Something went erong" })

@@ -1,6 +1,8 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
+import morgan from 'morgan';
+
 
 import { services } from './services';
 
@@ -10,7 +12,12 @@ const app = express();
 app.use(cors());
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }));
-
+app.use(morgan('dev', {
+    skip: function (req: any, res: any) { return res.statusCode < 400 }
+  }))
+  app.use(morgan('dev', {
+    skip: function (req: any, res: any) { return res.statusCode >= 400 }
+  }))
 
 app.use('/api', services);
 
