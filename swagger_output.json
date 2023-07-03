@@ -1,0 +1,148 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "REST API",
+    "description": ""
+  },
+  "host": "",
+  "server": {
+    "url": "https://18b9-119-63-138-143.ngrok-free.app"
+  },
+  "basePath": "",
+  "tags": [],
+  "schemes": [],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "name": "Authorization",
+      "type": "apiKey",
+      "in": "header"
+    }
+  },
+  "consumes": [],
+  "produces": [],
+  "paths": {
+    "/api/register/user": {
+      "post": {
+        "tags": [
+          "Registration"
+        ],
+        "description": "Register new user",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "User information.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddUser"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/register/business": {
+      "post": {
+        "tags": [
+          "Registration"
+        ],
+        "description": "Register new business user.",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Business User information.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/AddBusinessUser"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/login/": {
+      "post": {
+        "tags": [
+          "Login"
+        ],
+        "description": "Login for both user and business.",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Credentials.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "john.doe@gmail.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "strong_password"
+                }
+              },
+              "required": [
+                "email",
+                "password"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login sucessfull",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG4uZG9lQGdtYWlsLmNvbSIsInVzZXJUeXBlIjoidXNlciIsInVzZXJJZCI6NSwiaWF0IjoxNjI2MTk1NzMwLCJleHAiOjE2MjYxOTkzMzB9.ng3qio4HjXkGDnPIpCxdsZ_Ye5"
+                }
+              },
+              "required": [
+                "token"
+              ],
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    }
+   
+  }
+}

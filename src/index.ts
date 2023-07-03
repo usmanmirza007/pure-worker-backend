@@ -5,7 +5,9 @@ import morgan from 'morgan';
 
 
 import { services } from './services';
-
+const swaggerUi = require('swagger-ui-express')
+const swaggerFile = require('../swagger_output.json')
+const swaggerJsdoc = require('swagger-jsdoc');
 
 const app = express();
 
