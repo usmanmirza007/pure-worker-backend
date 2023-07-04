@@ -54,7 +54,7 @@ export const getSubcategoryFromCategory = async (req: Request, res: Response, ne
 
 export const createService = async (req: Request, res: Response, next: NextFunction) => {
 
-	const { serviceId, description, serviceDetail, price, city, potfolioFirst, potfolioSecond, idNumber, businessName, cac, scheduleDate, appointmentTime } = req.body
+	const { serviceId, description, serviceDetail, price, city, potfolioFirst, potfolioSecond, idNumber, businessName, cac, scheduleDate, appointmentTime } = JSON.parse(req.body)
 	const userId = (req as any).user.id
 
 	const images = JSON.parse(JSON.stringify(req.files))
@@ -75,10 +75,14 @@ export const createService = async (req: Request, res: Response, next: NextFunct
 	if (Array.isArray(images?.serviceImageThird) && images?.serviceImageThird[0].filename) {
 		serviceImageThird = images?.serviceImageThird[0].filename
 	}
-
+	console.log('serviceId', serviceId);
+	
 	try {
+		let service: any
 		if (serviceId) {
-			await prisma.service.update({
+			console.log('iffffff');
+			
+			service = await prisma.service.update({
 				where: { id: parseInt(serviceId) },
 				data: {
 					description: description,
@@ -100,7 +104,7 @@ export const createService = async (req: Request, res: Response, next: NextFunct
 				}
 			})
 		} else {
-			await prisma.service.create({
+			service = await prisma.service.create({
 				data: {
 					description: description,
 					serviceDetail: serviceDetail,
@@ -118,6 +122,55 @@ export const createService = async (req: Request, res: Response, next: NextFunct
 					serviceImageSecond: serviceImageSecond,
 					serviceImageThird: serviceImageThird,
 					userId: userId
+				}
+			})
+		}
+
+		return res.status(200).json({ serviceId: service.id });
+	} catch (error) {
+		console.log('error', error);
+		
+		return res.status(500).json(error);
+	}
+}
+
+export const createServiceContract = async (req: Request, res: Response, next: NextFunction) => {
+
+	const { serviceId, fullNameFirst, relationFirst, emailFirst, phoneNumberFirst, addressFirst,
+		fullNameSecond, relationSecond, emailSecond, phoneNumberSecond, addressSecond, } = req.body
+	const userId = (req as any).user.id
+
+	try {
+		let service: any
+		if (serviceId) {
+			service = await prisma.serviceContract.update({
+				where: { id: parseInt(serviceId) },
+				data: {
+					addressFirst: addressFirst,
+					fullNameFirst: fullNameFirst,
+					relationFirst: relationFirst,
+					emailFirst: emailFirst,
+					phoneNumberFirst: phoneNumberFirst,
+					fullNameSecond: fullNameSecond,
+					relationSecond: relationSecond,
+					emailSecond: emailSecond,
+					phoneNumberSecond: phoneNumberSecond,
+					addressSecond: addressSecond
+				}
+			})
+		} else {
+			service = await prisma.serviceContract.create({
+				data: {
+					addressFirst: addressFirst,
+					fullNameFirst: fullNameFirst,
+					relationFirst: relationFirst,
+					emailFirst: emailFirst,
+					phoneNumberFirst: phoneNumberFirst,
+					fullNameSecond: fullNameSecond,
+					relationSecond: relationSecond,
+					emailSecond: emailSecond,
+					phoneNumberSecond: phoneNumberSecond,
+					addressSecond: addressSecond
 				}
 			})
 		}

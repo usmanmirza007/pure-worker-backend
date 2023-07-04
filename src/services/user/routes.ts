@@ -9,7 +9,7 @@ const jwt = require('express-jwt')
 userRouter.route('/').get(jwt(secret_key), controller.userDetail)
 userRouter.route('/category').get(controller.getCategory)
 userRouter.route('/category/:categoryId').get(controller.getSubcategoryFromCategory)
-userRouter.route("/service").post(jwt(secret_key), storage.fields([
+userRouter.route("/service").patch(jwt(secret_key), storage.fields([
   {
     name: 'profilePicture',
     maxCount: 1
@@ -27,3 +27,4 @@ userRouter.route("/service").post(jwt(secret_key), storage.fields([
     maxCount: 1
   }
 ]), controller.createService)
+userRouter.route('/serviceContract').get(controller.createServiceContract)
