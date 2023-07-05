@@ -54,14 +54,26 @@ export const getSubcategoryFromCategory = async (req: Request, res: Response, ne
 
 export const createService = async (req: Request, res: Response, next: NextFunction) => {
 
-	const { serviceId, description, serviceDetail, price, city, potfolioFirst, potfolioSecond, idNumber, businessName, cac, scheduleDate, appointmentTime } = JSON.parse(req.body)
+	const { serviceId, description, servicesDescription, servicePrice, city, potfolioFirst, potfolioSecond, idNumber, businessName, cac, scheduleDate, appointmentTime,
+		addressFirst, fullNameFirst, relationFirst, emailFirst, phoneNumberFirst, fullNameSecond, relationSecond, emailSecond, phoneNumberSecond, addressSecond, } = req.body
 	const userId = (req as any).user.id
 
+	var profilePicture: any = ''
+	var serviceImageFirst: any = ''
+	var serviceImageSecond: any = ''
+	var serviceImageThird: any = ''
 	const images = JSON.parse(JSON.stringify(req.files))
-	var profilePicture = ''
-	var serviceImageFirst = ''
-	var serviceImageSecond = ''
-	var serviceImageThird = ''
+	let currentService: any
+	if (serviceId) {
+		currentService = await prisma.service.findUnique({ where: { id: parseInt(serviceId) } })
+		if (currentService) {
+			profilePicture = currentService?.profilePicture
+			serviceImageFirst = currentService?.serviceImageFirst
+			serviceImageSecond = currentService?.serviceImageSecond
+			serviceImageThird = currentService?.serviceImageThird
+		}
+	}
+
 
 	if (Array.isArray(images?.profilePicture) && images?.profilePicture[0].filename) {
 		profilePicture = images?.profilePicture[0].filename
@@ -75,53 +87,54 @@ export const createService = async (req: Request, res: Response, next: NextFunct
 	if (Array.isArray(images?.serviceImageThird) && images?.serviceImageThird[0].filename) {
 		serviceImageThird = images?.serviceImageThird[0].filename
 	}
-	console.log('serviceId', serviceId);
-	
 	try {
 		let service: any
 		if (serviceId) {
-			console.log('iffffff');
-			
 			service = await prisma.service.update({
 				where: { id: parseInt(serviceId) },
 				data: {
-					description: description,
-					serviceDetail: serviceDetail,
-					price: price,
-					city: city,
-					potfolioFirst: potfolioFirst,
-					potfolioSecond: potfolioSecond,
-					idNumber: idNumber,
-					businessName: businessName,
-					cac: cac,
-					scheduleDate: scheduleDate,
-					appointmentTime: appointmentTime,
+					description: currentService?.description ? currentService.description : description,
+					serviceDetail: JSON.stringify(currentService?.serviceDetail),
+					price: JSON.stringify(currentService?.price),
+					city: currentService?.city ? currentService.city : city,
+					potfolioFirst: currentService?.potfolioFirst ? currentService.potfolioFirst : potfolioFirst,
+					potfolioSecond: currentService?.potfolioSecond ? currentService.potfolioSecond : potfolioSecond,
 					profilePicture: profilePicture,
 					serviceImageFirst: serviceImageFirst,
 					serviceImageSecond: serviceImageSecond,
 					serviceImageThird: serviceImageThird,
-					userId: userId
+					addressFirst: currentService?.addressFirst ? currentService.addressFirst : addressFirst,
+					fullNameFirst: currentService?.fullNameFirst ? currentService.fullNameFirst : fullNameFirst,
+					relationFirst: currentService?.relationFirst ? currentService.relationFirst : relationFirst,
+					emailFirst: currentService?.emailFirst ? currentService.emailFirst : emailFirst,
+					phoneNumberFirst: currentService?.phoneNumberFirst ? currentService.phoneNumberFirst : phoneNumberFirst,
+					fullNameSecond: currentService?.fullNameSecond ? currentService.fullNameSecond : fullNameSecond,
+					relationSecond: currentService?.relationSecond ? currentService.relationSecond : relationSecond,
+					emailSecond: currentService?.emailSecond ? currentService.emailSecond : emailSecond,
+					phoneNumberSecond: currentService?.phoneNumberSecond ? currentService.phoneNumberSecond : phoneNumberSecond,
+					addressSecond: currentService?.addressSecond ? currentService.addressSecond : addressSecond,
+					idNumber: idNumber ? idNumber:  currentService.idNumber ,
+					businessName: businessName ? businessName : currentService.businessName ,
+					cac: cac ? cac : currentService.cac ,
+					scheduleDate: scheduleDate ? scheduleDate : currentService?.scheduleDate,
+					appointmentTime: appointmentTime ? appointmentTime : currentService?.appointmentTime ,
+					userId: userId,
 				}
 			})
 		} else {
 			service = await prisma.service.create({
 				data: {
 					description: description,
-					serviceDetail: serviceDetail,
-					price: price,
+					serviceDetail: servicesDescription,
+					price: servicePrice,
 					city: city,
 					potfolioFirst: potfolioFirst,
 					potfolioSecond: potfolioSecond,
-					idNumber: idNumber,
-					businessName: businessName,
-					cac: cac,
-					scheduleDate: scheduleDate,
-					appointmentTime: appointmentTime,
 					profilePicture: profilePicture,
 					serviceImageFirst: serviceImageFirst,
 					serviceImageSecond: serviceImageSecond,
 					serviceImageThird: serviceImageThird,
-					userId: userId
+					userId: userId,
 				}
 			})
 		}
@@ -129,54 +142,7 @@ export const createService = async (req: Request, res: Response, next: NextFunct
 		return res.status(200).json({ serviceId: service.id });
 	} catch (error) {
 		console.log('error', error);
-		
-		return res.status(500).json(error);
-	}
-}
 
-export const createServiceContract = async (req: Request, res: Response, next: NextFunction) => {
-
-	const { serviceId, fullNameFirst, relationFirst, emailFirst, phoneNumberFirst, addressFirst,
-		fullNameSecond, relationSecond, emailSecond, phoneNumberSecond, addressSecond, } = req.body
-	const userId = (req as any).user.id
-
-	try {
-		let service: any
-		if (serviceId) {
-			service = await prisma.serviceContract.update({
-				where: { id: parseInt(serviceId) },
-				data: {
-					addressFirst: addressFirst,
-					fullNameFirst: fullNameFirst,
-					relationFirst: relationFirst,
-					emailFirst: emailFirst,
-					phoneNumberFirst: phoneNumberFirst,
-					fullNameSecond: fullNameSecond,
-					relationSecond: relationSecond,
-					emailSecond: emailSecond,
-					phoneNumberSecond: phoneNumberSecond,
-					addressSecond: addressSecond
-				}
-			})
-		} else {
-			service = await prisma.serviceContract.create({
-				data: {
-					addressFirst: addressFirst,
-					fullNameFirst: fullNameFirst,
-					relationFirst: relationFirst,
-					emailFirst: emailFirst,
-					phoneNumberFirst: phoneNumberFirst,
-					fullNameSecond: fullNameSecond,
-					relationSecond: relationSecond,
-					emailSecond: emailSecond,
-					phoneNumberSecond: phoneNumberSecond,
-					addressSecond: addressSecond
-				}
-			})
-		}
-
-		return res.status(200).json({ success: true });
-	} catch (error) {
 		return res.status(500).json(error);
 	}
 }

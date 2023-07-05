@@ -27,4 +27,3 @@ userRouter.route("/service").patch(jwt(secret_key), storage.fields([
     maxCount: 1
   }
 ]), controller.createService)
-userRouter.route('/serviceContract').get(controller.createServiceContract)

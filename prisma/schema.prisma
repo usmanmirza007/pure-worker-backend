@@ -52,6 +52,8 @@ model SubCategory {
 
 model Service {
     id                 Int              @id @default(autoincrement())
+    User               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId             Int
     profilePicture     String?
     description        String
     serviceDetail      Json
@@ -67,25 +69,15 @@ model Service {
     cac                String?
     scheduleDate       String?
     appointmentTime    String?
-    User               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId             Int
-    ServiceContract    ServiceContract?
+    fullNameFirst      String?
+    relationFirst      String?
+    emailFirst         String?          
+    phoneNumberFirst   String?
+    addressFirst       String?
+    fullNameSecond     String?
+    relationSecond     String?
+    emailSecond        String?          
+    phoneNumberSecond  String?
+    addressSecond      String?
 }
 
-model ServiceContract {
-    id                Int      @id @default(autoincrement())
-    contractFirst     String   @default("First")
-    fullNameFirst     String
-    relationFirst     String
-    emailFirst        String   @unique
-    phoneNumberFirst  String
-    addressFirst      String
-    contractSecond    String   @default("Second")
-    fullNameSecond    String
-    relationSecond    String
-    emailSecond       String   @unique
-    phoneNumberSecond String
-    addressSecond     String
-    Service           Service? @relation(fields: [serviceId], references: [id], onDelete: Cascade)
-    serviceId         Int?     @unique
-}
