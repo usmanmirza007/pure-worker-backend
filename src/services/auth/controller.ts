@@ -140,6 +140,27 @@ export const createOtp = async (req: Request, res: Response) => {
 	}
 };
 
+export const resetOtp = async (req: Request, res: Response) => {
+	const { email } = req.body
+
+	if (!email) {
+		return res.status(400).json({ message: "Request should have email" })
+	}
+	try {
+		
+		const data = await prisma.user.update({
+			where: { email: email },
+			data: {
+				otp: 0,
+			}
+		})
+		return res.status(200).json({ success: true })
+	} catch (error) {
+		console.log('err', error);
+		return res.status(500).json(error)
+	}
+};
+
 
 export const verifyOtp = async (req: Request, res: Response) => {
 	const { email, otp } = req.body;
