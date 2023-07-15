@@ -36,6 +36,8 @@ export const getCategory = async (req: Request, res: Response, next: NextFunctio
 
 		return res.status(200).json(category);
 	} catch (error) {
+		console.log('err', error);
+
 		return res.status(500).json(error);
 	}
 }
@@ -64,30 +66,30 @@ export const createService = async (req: Request, res: Response, next: NextFunct
 	var serviceImageThird: any = ''
 	const images = JSON.parse(JSON.stringify(req.files))
 	let currentService: any
-	if (serviceId) {
-		currentService = await prisma.service.findUnique({ where: { id: parseInt(serviceId) } })
-		if (currentService) {
-			profilePicture = currentService?.profilePicture
-			serviceImageFirst = currentService?.serviceImageFirst
-			serviceImageSecond = currentService?.serviceImageSecond
-			serviceImageThird = currentService?.serviceImageThird
-		}
-	}
-
-
-	if (Array.isArray(images?.profilePicture) && images?.profilePicture[0].filename) {
-		profilePicture = images?.profilePicture[0].filename
-	}
-	if (Array.isArray(images?.serviceImageFirst) && images?.serviceImageFirst[0].filename) {
-		serviceImageFirst = images?.serviceImageFirst[0].filename
-	}
-	if (Array.isArray(images?.serviceImageSecond) && images?.serviceImageSecond[0].filename) {
-		serviceImageSecond = images?.serviceImageSecond[0].filename
-	}
-	if (Array.isArray(images?.serviceImageThird) && images?.serviceImageThird[0].filename) {
-		serviceImageThird = images?.serviceImageThird[0].filename
-	}
 	try {
+
+		if (serviceId) {
+			currentService = await prisma.service.findUnique({ where: { id: parseInt(serviceId) } })
+			if (currentService) {
+				profilePicture = currentService?.profilePicture
+				serviceImageFirst = currentService?.serviceImageFirst
+				serviceImageSecond = currentService?.serviceImageSecond
+				serviceImageThird = currentService?.serviceImageThird
+			}
+		}
+
+		if (Array.isArray(images?.profilePicture) && images?.profilePicture[0].filename) {
+			profilePicture = images?.profilePicture[0].filename
+		}
+		if (Array.isArray(images?.serviceImageFirst) && images?.serviceImageFirst[0].filename) {
+			serviceImageFirst = images?.serviceImageFirst[0].filename
+		}
+		if (Array.isArray(images?.serviceImageSecond) && images?.serviceImageSecond[0].filename) {
+			serviceImageSecond = images?.serviceImageSecond[0].filename
+		}
+		if (Array.isArray(images?.serviceImageThird) && images?.serviceImageThird[0].filename) {
+			serviceImageThird = images?.serviceImageThird[0].filename
+		}
 		let service: any
 		if (serviceId) {
 			service = await prisma.service.update({
@@ -113,11 +115,11 @@ export const createService = async (req: Request, res: Response, next: NextFunct
 					emailSecond: currentService?.emailSecond ? currentService.emailSecond : emailSecond,
 					phoneNumberSecond: currentService?.phoneNumberSecond ? currentService.phoneNumberSecond : phoneNumberSecond,
 					addressSecond: currentService?.addressSecond ? currentService.addressSecond : addressSecond,
-					idNumber: idNumber ? idNumber:  currentService.idNumber ,
-					businessName: businessName ? businessName : currentService.businessName ,
-					cac: cac ? cac : currentService.cac ,
+					idNumber: idNumber ? idNumber : currentService.idNumber,
+					businessName: businessName ? businessName : currentService.businessName,
+					cac: cac ? cac : currentService.cac,
 					scheduleDate: scheduleDate ? scheduleDate : currentService?.scheduleDate,
-					appointmentTime: appointmentTime ? appointmentTime : currentService?.appointmentTime ,
+					appointmentTime: appointmentTime ? appointmentTime : currentService?.appointmentTime,
 					userId: userId,
 				}
 			})
