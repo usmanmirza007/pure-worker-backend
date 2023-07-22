@@ -177,7 +177,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
 						UserType: user.userType,
 						id: user.id,
 					}, secret_key.secret, {
-						// expiresIn: '4h',
+						expiresIn: '365d',
 						algorithm: secret_key.algorithms[0]
 					});
 					const verifyUser = await prisma.user.update({

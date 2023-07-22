@@ -51,33 +51,38 @@ model SubCategory {
 }
 
 model Service {
-    id                 Int              @id @default(autoincrement())
-    User               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId             Int
-    profilePicture     String?
-    description        String
-    serviceDetail      Json
-    price              Json
-    city               String
-    potfolioFirst      String?
-    potfolioSecond     String?
-    serviceImageFirst  String?
-    serviceImageSecond String?
-    serviceImageThird  String?
-    idNumber           String?
-    businessName       String?
-    cac                String?
-    scheduleDate       String?
-    appointmentTime    String?
-    fullNameFirst      String?
-    relationFirst      String?
-    emailFirst         String?          
-    phoneNumberFirst   String?
-    addressFirst       String?
-    fullNameSecond     String?
-    relationSecond     String?
-    emailSecond        String?          
-    phoneNumberSecond  String?
-    addressSecond      String?
+    id                Int               @id @default(autoincrement())
+    profilePicture    String?           @db.LongText
+    description       String
+    serviceDetail     Json
+    price             Json
+    city              String
+    idNumber          String?
+    businessName      String?
+    cac               String?
+    scheduleDate      String?
+    appointmentTime   String?
+    fullNameFirst     String?
+    relationFirst     String?
+    emailFirst        String?
+    phoneNumberFirst  String?
+    addressFirst      String?
+    fullNameSecond    String?
+    relationSecond    String?
+    emailSecond       String?
+    phoneNumberSecond String?
+    addressSecond     String?
+    User              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId            Int
+    ServicePotfolio   ServicePotfolio[]
 }
 
+model ServicePotfolio {
+    id                  Int     @id @default(autoincrement())
+    description         String
+    potfolioImageFirst  String? @db.LongText
+    potfolioImageSecond String? @db.LongText
+    potfolioImageThird  String? @db.LongText
+    service             Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+    serviceId           Int
+}

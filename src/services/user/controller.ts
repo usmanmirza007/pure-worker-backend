@@ -56,40 +56,18 @@ export const getSubcategoryFromCategory = async (req: Request, res: Response, ne
 
 export const createService = async (req: Request, res: Response, next: NextFunction) => {
 
-	const { serviceId, description, servicesDescription, servicePrice, city, potfolioFirst, potfolioSecond, idNumber, businessName, cac, scheduleDate, appointmentTime,
-		addressFirst, fullNameFirst, relationFirst, emailFirst, phoneNumberFirst, fullNameSecond, relationSecond, emailSecond, phoneNumberSecond, addressSecond, } = req.body
-	const userId = (req as any).user.id
+	const { serviceId, profilePicture, description, servicesDescription, servicePrice, city, idNumber, businessName, cac, scheduleDate, appointmentTime,
+		addressFirst, fullNameFirst, relationFirst, emailFirst, phoneNumberFirst, fullNameSecond, relationSecond, emailSecond, phoneNumberSecond, addressSecond, potfolios } = req.body
 
-	var profilePicture: any = ''
-	var serviceImageFirst: any = ''
-	var serviceImageSecond: any = ''
-	var serviceImageThird: any = ''
-	const images = JSON.parse(JSON.stringify(req.files))
+	const userId = (req as any).user.id
+		
 	let currentService: any
 	try {
 
 		if (serviceId) {
 			currentService = await prisma.service.findUnique({ where: { id: parseInt(serviceId) } })
-			if (currentService) {
-				profilePicture = currentService?.profilePicture
-				serviceImageFirst = currentService?.serviceImageFirst
-				serviceImageSecond = currentService?.serviceImageSecond
-				serviceImageThird = currentService?.serviceImageThird
-			}
 		}
 
-		if (Array.isArray(images?.profilePicture) && images?.profilePicture[0].filename) {
-			profilePicture = images?.profilePicture[0].filename
-		}
-		if (Array.isArray(images?.serviceImageFirst) && images?.serviceImageFirst[0].filename) {
-			serviceImageFirst = images?.serviceImageFirst[0].filename
-		}
-		if (Array.isArray(images?.serviceImageSecond) && images?.serviceImageSecond[0].filename) {
-			serviceImageSecond = images?.serviceImageSecond[0].filename
-		}
-		if (Array.isArray(images?.serviceImageThird) && images?.serviceImageThird[0].filename) {
-			serviceImageThird = images?.serviceImageThird[0].filename
-		}
 		let service: any
 		if (serviceId) {
 			service = await prisma.service.update({
@@ -99,12 +77,7 @@ export const createService = async (req: Request, res: Response, next: NextFunct
 					serviceDetail: JSON.stringify(currentService?.serviceDetail),
 					price: JSON.stringify(currentService?.price),
 					city: currentService?.city ? currentService.city : city,
-					potfolioFirst: currentService?.potfolioFirst ? currentService.potfolioFirst : potfolioFirst,
-					potfolioSecond: currentService?.potfolioSecond ? currentService.potfolioSecond : potfolioSecond,
 					profilePicture: profilePicture,
-					serviceImageFirst: serviceImageFirst,
-					serviceImageSecond: serviceImageSecond,
-					serviceImageThird: serviceImageThird,
 					addressFirst: currentService?.addressFirst ? currentService.addressFirst : addressFirst,
 					fullNameFirst: currentService?.fullNameFirst ? currentService.fullNameFirst : fullNameFirst,
 					relationFirst: currentService?.relationFirst ? currentService.relationFirst : relationFirst,
@@ -118,8 +91,8 @@ export const createService = async (req: Request, res: Response, next: NextFunct
 					idNumber: idNumber ? idNumber : currentService.idNumber,
 					businessName: businessName ? businessName : currentService.businessName,
 					cac: cac ? cac : currentService.cac,
-					scheduleDate: scheduleDate ? scheduleDate : currentService?.scheduleDate,
-					appointmentTime: appointmentTime ? appointmentTime : currentService?.appointmentTime,
+					scheduleDate: scheduleDate ? scheduleDate?.toString() : currentService?.scheduleDate?.toString(),
+					appointmentTime: appointmentTime ? appointmentTime?.toString() : currentService?.appointmentTime?.toString(),
 					userId: userId,
 				}
 			})
@@ -130,17 +103,26 @@ export const createService = async (req: Request, res: Response, next: NextFunct
 					serviceDetail: servicesDescription,
 					price: servicePrice,
 					city: city,
-					potfolioFirst: potfolioFirst,
-					potfolioSecond: potfolioSecond,
 					profilePicture: profilePicture,
-					serviceImageFirst: serviceImageFirst,
-					serviceImageSecond: serviceImageSecond,
-					serviceImageThird: serviceImageThird,
 					userId: userId,
+					
 				}
 			})
 		}
 
+		if (service?.id && Array.isArray(potfolios) && potfolios.length) {
+			for (const potfolio of potfolios) {
+				await prisma.servicePotfolio.create({
+					data: {
+						serviceId: service.id,
+						description: potfolio.shortDescription,
+						potfolioImageFirst: potfolio.potfolioImages?.length ? potfolio.potfolioImages[0] : '',
+						potfolioImageSecond: potfolio.potfolioImages?.length > 1 ? potfolio.potfolioImages[1] : '',
+						potfolioImageThird: potfolio.potfolioImages?.length > 2 ? potfolio.potfolioImages[2] : ''
+					}
+				})
+			}
+		}
 		return res.status(200).json({ serviceId: service.id });
 	} catch (error) {
 		console.log('error', error);
