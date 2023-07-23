@@ -10,15 +10,17 @@ const prisma = new PrismaClient()
 export const register = async (req: Request, res: Response) => {
 	const { firstName, lastName, phoneNumber, email, userType, dob, businessName, cacNo, location, address, gender, nationality } = req.body
 
-	if (userType == UserType.FREELANCER || userType == UserType.BUSINESS) {
-		if (!businessName || !cacNo || !location || !email || !address) {
-			return res.status(400).json({ message: `Request should have all parameters for ${userType}` })
-		}
-	} else if (userType == UserType.PROVIDER || userType == UserType.CUSTOMER) {
-		if (!firstName || !lastName || !phoneNumber || !email) {
-			return res.status(400).json({ message: `Request should have all parameters for ${userType}` })
+	if (userType == UserType.FREELANCER || userType == UserType.CUSTOMER) {
+		if (!email || !address || !firstName || !lastName || !phoneNumber || !dob || !address || !gender) {
+			return res.status(400).json({ message: `Request should have all parameters for1 ${userType}` })
 		}
 	}
+	
+	if (userType == UserType.BUSINESS) {
+		if (!businessName || !cacNo || !location || !email || !address || !phoneNumber) {
+			return res.status(400).json({ message: `Request should have all parameters for2 ${userType}` })
+		}
+	} 
 
 	let type: UserType = userType
 	const exsistingUser = await prisma.user.findUnique({
