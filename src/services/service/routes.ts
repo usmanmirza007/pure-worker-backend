@@ -7,3 +7,6 @@ const jwt = require('express-jwt')
 
 serviceRouter.route('/').get(jwt(secret_key), controller.getAllProviderProfile)
 serviceRouter.route('/potfolio').get(jwt(secret_key), controller.getAllPotfolio)
+serviceRouter.route('/favorite').post(jwt(secret_key), controller.favoriteServiceProvider);
+serviceRouter.route('/favorite').get(jwt(secret_key), controller.getFavoriteServiceProvider);
+

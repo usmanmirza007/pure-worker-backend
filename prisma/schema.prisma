@@ -18,22 +18,23 @@ enum UserType {
 }
 
 model User {
-    id           Int       @id @default(autoincrement())
-    firstName    String?
-    lastName     String?
-    email        String    @unique
-    phoneNumber  String?
-    otp          Int
-    dob          DateTime?
-    businessName String?
-    cacNo        String?
-    location     String?
-    address      String?
-    gender       String?
-    nationality  String?
-    isVerified   Boolean   @default(false)
-    userType     UserType
-    Service      Service[]
+    id                      Int                       @id @default(autoincrement())
+    firstName               String?
+    lastName                String?
+    email                   String                    @unique
+    phoneNumber             String?
+    otp                     Int
+    dob                     DateTime?
+    businessName            String?
+    cacNo                   String?
+    location                String?
+    address                 String?
+    gender                  String?
+    nationality             String?
+    isVerified              Boolean                   @default(false)
+    userType                UserType
+    Service                 Service[]
+    FavoriteServiceProvider FavoriteServiceProvider[]
 }
 
 model Category {
@@ -51,30 +52,31 @@ model SubCategory {
 }
 
 model Service {
-    id                Int               @id @default(autoincrement())
-    profilePicture    String?           @db.LongText
-    description       String
-    serviceDetail     Json
-    price             Json
-    city              String
-    idNumber          String?
-    businessName      String?
-    cac               String?
-    scheduleDate      String?
-    appointmentTime   String?
-    fullNameFirst     String?
-    relationFirst     String?
-    emailFirst        String?
-    phoneNumberFirst  String?
-    addressFirst      String?
-    fullNameSecond    String?
-    relationSecond    String?
-    emailSecond       String?
-    phoneNumberSecond String?
-    addressSecond     String?
-    User              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId            Int
-    ServicePotfolio   ServicePotfolio[]
+    id                      Int                       @id @default(autoincrement())
+    profilePicture          String?                   @db.LongText
+    description             String
+    serviceDetail           Json
+    price                   Json
+    city                    String
+    idNumber                String?
+    businessName            String?
+    cac                     String?
+    scheduleDate            String?
+    appointmentTime         String?
+    fullNameFirst           String?
+    relationFirst           String?
+    emailFirst              String?
+    phoneNumberFirst        String?
+    addressFirst            String?
+    fullNameSecond          String?
+    relationSecond          String?
+    emailSecond             String?
+    phoneNumberSecond       String?
+    addressSecond           String?
+    User                    User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId                  Int
+    ServicePotfolio         ServicePotfolio[]
+    FavoriteServiceProvider FavoriteServiceProvider[]
 }
 
 model ServicePotfolio {
@@ -85,4 +87,14 @@ model ServicePotfolio {
     potfolioImageThird  String? @db.LongText
     service             Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
     serviceId           Int
+}
+
+model FavoriteServiceProvider {
+    id        Int     @id @default(autoincrement())
+    user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId    Int
+    service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+    serviceId Int
+
+    @@unique([userId, serviceId], name: "unique_favorite_products")
 }
