@@ -116,9 +116,7 @@ export const createService = async (req: Request, res: Response, next: NextFunct
 					data: {
 						serviceId: service.id,
 						description: potfolio.shortDescription,
-						potfolioImageFirst: potfolio.potfolioImages?.length ? potfolio.potfolioImages[0] : '',
-						potfolioImageSecond: potfolio.potfolioImages?.length > 1 ? potfolio.potfolioImages[1] : '',
-						potfolioImageThird: potfolio.potfolioImages?.length > 2 ? potfolio.potfolioImages[2] : ''
+						potfolioImages: JSON.stringify(potfolio.potfolioImages)
 					}
 				})
 			}
