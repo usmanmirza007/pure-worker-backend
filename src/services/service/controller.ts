@@ -43,8 +43,8 @@ export const getSingleProviderService = async (req: Request, res: Response, next
 	const { serviceId } = req.params
 	
 	try {
-		const user = await prisma.service.findUnique({where: {id: parseInt(serviceId)}, include: {ServicePotfolio: true, User: true} })
-		return res.status(200).json(user);
+		const service = await prisma.service.findUnique({where: {id: parseInt(serviceId)}, include: {ServicePotfolio: true, User: true} })		
+		return res.status(200).json(service);
 	} catch (error) {
 		console.log('err', error);
 

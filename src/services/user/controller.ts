@@ -74,8 +74,8 @@ export const createService = async (req: Request, res: Response, next: NextFunct
 				where: { id: parseInt(serviceId) },
 				data: {
 					description: currentService?.description ? currentService.description : description,
-					serviceDetail: JSON.stringify(currentService?.serviceDetail),
-					price: JSON.stringify(currentService?.price),
+					serviceDetail: currentService?.serviceDetail,
+					price: currentService?.price,
 					city: currentService?.city ? currentService.city : city,
 					profilePicture: profilePicture,
 					addressFirst: currentService?.addressFirst ? currentService.addressFirst : addressFirst,
